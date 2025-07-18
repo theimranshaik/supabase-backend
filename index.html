@@ -1,0 +1,67 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Submit Data</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .message {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Submit Your Data</h2>
+  <input type="text" id="name" placeholder="Enter your name" />
+  <input type="text" id="number" placeholder="Enter your number" />
+  <button onclick="submitData()">Submit</button>
+  <div class="message" id="message"></div>
+
+  <script>
+    async function submitData() {
+      const name = document.getElementById('name').value.trim();
+      const number = document.getElementById('number').value.trim();
+      const message = document.getElementById('message');
+
+      if (!name || !number) {
+        message.textContent = 'Both fields are required.';
+        message.style.color = 'red';
+        return;
+      }
+
+      try {
+        const res = await fetch('https://supabase-backend-cyxk.onrender.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, number }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          message.textContent = 'Data submitted successfully!';
+          message.style.color = 'green';
+        } else {
+          message.textContent = data.error || 'Submission failed.';
+          message.style.color = 'red';
+        }
+      } catch (err) {
+        message.textContent = 'Network error.';
+        message.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>
